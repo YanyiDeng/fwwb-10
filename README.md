@@ -1,16 +1,16 @@
 # 文件结构
 
 |- fwwb<br/>
-|　　|- data　　　　　　　　　　　  # 预处理得到的数据<br/>
+|　　|- data　　　　　　　　　　　   # 预处理得到的数据<br/>
 |　　|- data_process　　　　　　　 # 数据预处理代码<br/>
-|　　|- glove　　　　　　　　　　  # glove预训练词向量代码<br/>
-|　　|- models　　　　　　　　　　 # 模型代码<br/>
-|　　|- raw_data　　　　　　　　　 # 比赛提供的原始数据<br/>
-|　　|- WebVisualizaion　　　　　 # Web可视化代码<br/>
+|　　|- glove　　　　　　　　　　   # glove预训练词向量代码<br/>
+|　　|- models　　　　　　　　　　  # 模型代码<br/>
+|　　|- raw_data　　　　　　　　　  # 比赛提供的原始数据<br/>
+|　　|- WebVisualizaion　　　　　  # Web可视化代码<br/>
 
 ## raw_data文件夹
 
-- test.tsv和train.tsv为赛题方提供的数据，由于系统原因我将文件的编码修改为utf-8，文件换行符修改为'\n',与Windows系统默认编码和换行符不同，使用Pycharm时应该无影响。<br/>
+- test.tsv和train.tsv为赛题方提供的数据，由于系统原因我将文件的编码修改为utf-8，文件换行符修改为'\n',与Windows系统默认编码和换行符不同，使用PyCharm时应该无影响。<br/>
 - newtrain.tsv为处理后的train.tsv，处理方式是扩充类别数量少的数据，具体方式为：若某类别的数据量少于1000条，则扩充至1000条；若数据量大于1000条，则不做处理。<br/>
 
 ## data文件夹
