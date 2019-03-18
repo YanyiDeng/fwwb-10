@@ -26,6 +26,7 @@ def jieba_tokenizer(item_name):
 CLASSIFICATION_FILE_PATH = "../data_process/classification.txt"
 MODEL_PATH = "model/model.h5"
 TOKENIZER_PATH = "model/tokenizer.pickle"
+RESULT_PATH = "../WebVisualization/lib/assets/result.txt"
 
 # 建立索引转分类名的列表
 index_to_type = []
@@ -33,13 +34,11 @@ with open(CLASSIFICATION_FILE_PATH, 'r', encoding='utf-8') as f:
     for line in f.readlines():
         line = line.strip()
         index_to_type.append(line)
-print("总共有", len(index_to_type), "种分类名")
 
 # 加载模型和分词器
 with open(TOKENIZER_PATH, 'rb') as f:
     tokenizer = pickle.load(f)
 model = load_model(MODEL_PATH)
-model.summary()
 
 # 进行商品分类的预测
 maxlen = 30
@@ -54,4 +53,5 @@ item_types = []
 for temp_label_one_hot in labels:
     label_index = get_label_index(temp_label_one_hot)
     item_types.append(index_to_type[label_index])
-print('&&'.join(item_types))
+with open(RESULT_PATH, 'w') as f:
+    f.write('&&'.join(item_types))
