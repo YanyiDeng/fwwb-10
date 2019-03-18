@@ -114,7 +114,7 @@ model.summary()
 callback_list = [
     EarlyStopping(
         monitor='acc',
-        patience=2,
+        patience=1,
     ),
     ModelCheckpoint(
         filepath='model/model.h5',
@@ -130,7 +130,7 @@ model.compile(
 )
 history = model.fit(
     data, labels,
-    epochs=20,
+    epochs=25,
     batch_size=4096,
     callbacks=callback_list,
     validation_split=0.2
