@@ -97,9 +97,9 @@ for word, i in word_index.items():
 model = Sequential()
 model.add(layers.Embedding(max_words, embedding_dim, input_length=maxlen))
 model.add(layers.SpatialDropout1D(0.5))
-model.add(layers.Conv1D(256, 3, activation='relu'))
+model.add(layers.Conv1D(512, 3, activation='relu'))
 model.add(layers.MaxPooling1D(3))
-model.add(layers.Conv1D(256, 3, activation='relu'))
+model.add(layers.Conv1D(512, 3, activation='relu'))
 model.add(layers.GRU(2048, dropout=0.1, recurrent_dropout=0.5))
 model.add(layers.Dense(2048, activation='relu'))
 model.add(layers.Dropout(0.5))
@@ -132,8 +132,8 @@ model.compile(
 )
 history = model.fit(
     data, labels,
-    epochs=25,
-    batch_size=4096,
+    epochs=20,
+    batch_size=2048,
     callbacks=callback_list,
     validation_split=0.2
 )

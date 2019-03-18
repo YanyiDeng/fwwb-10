@@ -1,7 +1,7 @@
 import pickle
 import jieba
+import sys
 from keras.models import load_model
-from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 
 # 将预测结果的one_hot编码转换为对应的类别整数索引
@@ -43,12 +43,15 @@ model.summary()
 
 # 进行商品分类的预测
 maxlen = 30
-item_names = ["中国历史文选"]
+# 获取命令行参数中需要预测的商品名称
+param = sys.argv[1]
+item_names = param.split('&&')
 processed_item_names = [jieba_tokenizer(name) for name in item_names]
-print(processed_item_names)
 sequences = tokenizer.texts_to_sequences(processed_item_names)
 data = pad_sequences(sequences, maxlen=maxlen)
 labels = model.predict(data)
-for temp_name, temp_label_one_hot in zip(item_names, labels):
+item_types = []
+for temp_label_one_hot in labels:
     label_index = get_label_index(temp_label_one_hot)
-    print(temp_name, " --> ", index_to_type[label_index])
+    item_types.append(index_to_type[label_index])
+print('&&'.join(item_types))
