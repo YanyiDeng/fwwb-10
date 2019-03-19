@@ -97,10 +97,7 @@ dense_hidden_size = 4096
 text_input = Input(shape=(maxlen,))
 
 # Embeddings layers
-embedded_text = layers.Embedding(max_words, embedding_dim)(text_input)
-# 加载预训练GloVe嵌入
-embedded_text.set_weights([embedding_matrix])
-#embedded_text.trainable = False
+embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_matrix])(text_input)
 
 # Conv layers
 convs = []
