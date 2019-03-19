@@ -5,29 +5,20 @@ import matplotlib.pyplot as plt
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
+from keras.models import Model
 from keras import layers
+from keras import Input
 from keras.utils.np_utils import to_categorical
-from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 
-#CLASSIFICATION_FILE_PATH = "../data_process/classification.txt"
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
-
-# 建立索引转分类名的列表
-#index_to_type = []
-#with open(CLASSIFICATION_FILE_PATH, 'r', encoding='utf-8') as f:
-#    for line in f.readlines():
-#        line = line.strip()
-#        index_to_type.append(line)
-#print(index_to_type[0], index_to_type[1257])
-#print("总共有", len(index_to_type), "种分类名")
+TOKENIZER_PATH = 'model_cnn/tokenizer.pickle'
+MODEL_WEIGHT_PATH = 'model_cnn/model.h5'
 
 # 将训练数据和分类结果存入列表
 item_names = []
 item_types = []
 word_train_data = pd.read_csv(WORD_TRAIN_FILE_PATH, sep='\t', header=0, low_memory=False)
-#print(word_train_data['ITEM_NAME'][0], "=>", word_train_data['TYPE'][0])
-#print(len(word_train_data['ITEM_NAME']))
-#print(len(word_train_data['TYPE']))
 
 for (item_name, item_type) in zip(word_train_data['ITEM_NAME'], word_train_data['TYPE']):
     item_name = item_name.strip()
@@ -35,12 +26,6 @@ for (item_name, item_type) in zip(word_train_data['ITEM_NAME'], word_train_data[
     item_types.append(item_type)
 print("商品名共有", len(item_names), "项")
 print("商品分类共有", len(item_types), "项")
-#print(item_names[:3])
-#print(item_types[:3])
-#print(item_names[-3:])
-#print(item_types[-3:])
-#print(item_names[23333])  # 检查第23334项，tsv中第23335行
-#print(item_types[23333])
 
 # 对数据的文本进行分词与建立索引
 print("\n开始构建模型......")
@@ -67,7 +52,7 @@ data = data[indices]
 labels = labels[indices]
 
 # 保存分词索引
-with open('model/tokenizer.pickle', 'wb') as f:
+with open(TOKENIZER_PATH, 'wb') as f:
     pickle.dump(tokenizer, f)
 
 #对嵌入进行预处理
@@ -94,20 +79,46 @@ for word, i in word_index.items():
             embedding_matrix[i] = embedding_vector
 
 # 模型定义
-model = Sequential()
-model.add(layers.Embedding(max_words, embedding_dim, input_length=maxlen))
-model.add(layers.SpatialDropout1D(0.5))
-model.add(layers.Conv1D(512, 3, activation='relu'))
-model.add(layers.GlobalMaxPooling1D())
-model.add(layers.Dense(4096, activation='relu'))
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(4096, activation='relu'))
-model.add(layers.Dropout(0.5))
-model.add(layers.Dense(1258, activation='softmax'))
+#model = Sequential()
+#model.add(layers.Embedding(max_words, embedding_dim, input_length=maxlen))
+#model.add(layers.SpatialDropout1D(0.5))
+#model.add(layers.Conv1D(512, 3, activation='relu'))
+#model.add(layers.GlobalMaxPooling1D())
+#model.add(layers.Dense(4096, activation='relu'))
+#model.add(layers.Dropout(0.5))
+#model.add(layers.Dense(4096, activation='relu'))
+#model.add(layers.Dropout(0.5))
+#model.add(layers.Dense(1258, activation='softmax'))
 
+category_num = 1258
+conv_filter_size = 256
+dense_hidden_size = 4096
+# Inputs
+text_input = Input(shape=(maxlen,))
+
+# Embeddings layers
+embedded_text = layers.Embedding(max_words, embedding_dim)(text_input)
 # 加载预训练GloVe嵌入
-model.layers[0].set_weights([embedding_matrix])
-#model.layers[0].trainable = False
+embedded_text.set_weights([embedding_matrix])
+#embedded_text.trainable = False
+
+# Conv layers
+convs = []
+filter_sizes = [1, 2, 3, 4, 5]
+for fsz in filter_sizes:
+    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
+    batchNorm_1 = layers.BatchNormalization()(conv_1)
+    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(batchNorm_1)
+    batchNorm_2 = layers.BatchNormalization()(conv_2)
+    globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
+    convs.append(globalMaxPool)
+merge = layers.concatenate(convs, axis=-1)
+
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(merge)
+batchNorm_3 = layers.BatchNormalization()(dense_1)
+label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
+model = Model(text_input, label_output)
+
 model.summary()
 
 # 添加模型回调函数
@@ -117,14 +128,19 @@ callback_list = [
         patience=1,
     ),
     ModelCheckpoint(
-        filepath='model/model.h5',
+        filepath=MODEL_WEIGHT_PATH,
         monitor='val_loss',
         save_best_only=True,
+    ),
+    ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.1,
+        patience=10,
     )
 ]
 
 model.compile(
-    optimizer='rmsprop',
+    optimizer='adam',
     loss='categorical_crossentropy',
     metrics=['acc']
 )
