@@ -1,20 +1,14 @@
 import pickle
 import jieba
 import sys
+import numpy as np
 from keras.models import load_model
 from keras.preprocessing.sequence import pad_sequences
 
+
 # 将预测结果的one_hot编码转换为对应的类别整数索引
 def get_label_index(one_hot_label):
-    index = 0
-    max_pro = 0
-    label = -1
-    for temp_value in one_hot_label:
-        if temp_value > max_pro:
-            max_pro = temp_value
-            label = index
-        index += 1
-    return label
+    return np.argmax(one_hot_label)
 
 
 def jieba_tokenizer(item_name):
@@ -52,6 +46,7 @@ labels = model.predict(data)
 item_types = []
 for temp_label_one_hot in labels:
     label_index = get_label_index(temp_label_one_hot)
+    label_index = int(label_index)
     item_types.append(index_to_type[label_index])
 with open(RESULT_PATH, 'w') as f:
     f.write('&&'.join(item_types))
