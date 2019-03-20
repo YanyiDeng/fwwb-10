@@ -2,7 +2,6 @@ import pickle
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Model
 from keras import layers
@@ -13,6 +12,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
+GLOVE_EMBEDDING_PATH = "../glove/vectors.txt"
 MODEL_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
 PLOT_MODEL_PATH = 'result_plot/model_cnn.png'
 
@@ -53,7 +53,6 @@ data = data[indices]
 labels = labels[indices]
 
 #对嵌入进行预处理
-GLOVE_EMBEDDING_PATH = "../glove/vectors.txt"
 embeddings_index = {}
 f = open(GLOVE_EMBEDDING_PATH, 'r', encoding='utf-8')
 for line in f:

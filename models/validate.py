@@ -26,7 +26,7 @@ for (item_name, item_type) in zip(old_word_train_data['ITEM_NAME'], old_word_tra
 print("商品名共有", len(test_item_names), "项")
 print("商品分类共有", len(test_item_types), "项")
 
-maxlen = 30
+maxlen = 25
 sequences = tokenizer.texts_to_sequences(test_item_names)
 data = pad_sequences(sequences, maxlen=maxlen)
 labels = to_categorical(test_item_types)

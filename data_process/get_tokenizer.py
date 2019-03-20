@@ -26,3 +26,5 @@ tokenizer.fit_on_texts(item_names)
 # 保存分词索引
 with open(TOKENIZER_PATH, 'wb') as f:
     pickle.dump(tokenizer, f)
+word_index = tokenizer.word_index
+print("Found %s unique tokens." % len(word_index))

@@ -24,3 +24,5 @@ models/Figure_1\.png
 models/Figure_2\.png
 
 data/old_word_train\.tsv
+
+data_process/additional_data/

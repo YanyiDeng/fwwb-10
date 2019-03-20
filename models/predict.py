@@ -35,7 +35,7 @@ with open(TOKENIZER_PATH, 'rb') as f:
 model = load_model(MODEL_PATH)
 
 # 进行商品分类的预测
-maxlen = 30
+maxlen = 25
 # 获取命令行参数中需要预测的商品名称
 param = sys.argv[1]
 item_names = param.split('&&')
