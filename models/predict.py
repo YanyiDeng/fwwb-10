@@ -17,9 +17,9 @@ def jieba_tokenizer(item_name):
     return item_name_str
 
 
-CLASSIFICATION_FILE_PATH = "../data_process/classification.txt"
+CLASSIFICATION_FILE_PATH = "../data_process/additional_data/classification.txt"
 MODEL_PATH = "model/model.h5"
-TOKENIZER_PATH = "model/tokenizer.pickle"
+TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 RESULT_PATH = "../WebVisualization/lib/assets/result.txt"
 
 # 建立索引转分类名的列表

@@ -1,7 +1,7 @@
 import pandas as pd
 
-TRAIN_DATA_FILE_PATH = '../raw_data/newtrain.tsv'
-CLASSIFICATION_FILE_PATH = 'classification.txt'
+TRAIN_DATA_FILE_PATH = '../raw_data/train.tsv'
+CLASSIFICATION_FILE_PATH = 'additional_data/classification.txt'
 
 classification_set = set()  # 用于存储所有分类名的集合
 

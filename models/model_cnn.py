@@ -4,7 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential
 from keras.models import Model
 from keras import layers
 from keras import Input
@@ -13,7 +12,7 @@ from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
-TOKENIZER_PATH = 'model_cnn/tokenizer.pickle'
+TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 MODEL_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
 PLOT_MODEL_PATH = 'result_plot/model_cnn.png'
 
@@ -31,8 +30,8 @@ print("商品分类共有", len(item_types), "项")
 
 # 对数据的文本进行分词与建立索引
 print("\n开始构建模型......")
-maxlen = 30
-max_words = 300000
+maxlen = 25
+max_words = 250000
 
 tokenizer = Tokenizer(num_words=max_words)
 tokenizer.fit_on_texts(item_names)

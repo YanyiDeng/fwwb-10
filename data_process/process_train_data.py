@@ -1,7 +1,7 @@
 import pandas as pd
 import jieba
 
-CLASSIFICATION_FILE_PATH = "classification.txt"
+CLASSIFICATION_FILE_PATH = "additional_data/classification.txt"
 NEW_TRAIN_DATA_FILE_PATH = "../raw_data/newtrain.tsv"
 WORD_TRAIN_DATA_FILE_PATH = "../data/word_train.tsv"
 

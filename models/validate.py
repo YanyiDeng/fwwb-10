@@ -5,7 +5,7 @@ from keras.utils.np_utils import to_categorical
 from keras.preprocessing.sequence import pad_sequences
 
 MODEL_PATH = "model/model.h5"
-TOKENIZER_PATH = "model/tokenizer.pickle"
+TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 OLD_WORD_TRAIN_PATH = "../data/old_word_train.tsv"
 
 # 加载模型和分词器
