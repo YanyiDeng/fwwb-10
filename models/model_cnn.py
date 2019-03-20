@@ -8,12 +8,14 @@ from keras.models import Sequential
 from keras.models import Model
 from keras import layers
 from keras import Input
+from keras.utils import plot_model
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
 TOKENIZER_PATH = 'model_cnn/tokenizer.pickle'
-MODEL_WEIGHT_PATH = 'model_cnn/model.h5'
+MODEL_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
+PLOT_MODEL_PATH = 'result_plot/model_cnn.png'
 
 # 将训练数据和分类结果存入列表
 item_names = []
@@ -91,7 +93,7 @@ for word, i in word_index.items():
 #model.add(layers.Dense(1258, activation='softmax'))
 
 category_num = 1258
-conv_filter_size = 256
+conv_filter_size = 128
 dense_hidden_size = 4096
 # Inputs
 text_input = Input(shape=(maxlen,))
@@ -101,7 +103,7 @@ embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_ma
 
 # Conv layers
 convs = []
-filter_sizes = [1, 2, 3, 4, 5]
+filter_sizes = [1, 2, 3, 4]
 for fsz in filter_sizes:
     conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
     batchNorm_1 = layers.BatchNormalization()(conv_1)
@@ -143,7 +145,7 @@ model.compile(
 )
 history = model.fit(
     data, labels,
-    epochs=25,
+    epochs=30,
     batch_size=4096,
     callbacks=callback_list,
     validation_split=0.2
@@ -169,3 +171,4 @@ plt.title('Training and validation loss')
 plt.legend()
 
 plt.show()
+plot_model(model, to_file=PLOT_MODEL_PATH)
