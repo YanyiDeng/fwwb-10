@@ -75,17 +75,6 @@ for word, i in word_index.items():
             embedding_matrix[i] = embedding_vector
 
 # 模型定义
-#model = Sequential()
-#model.add(layers.Embedding(max_words, embedding_dim, input_length=maxlen))
-#model.add(layers.SpatialDropout1D(0.5))
-#model.add(layers.Conv1D(512, 3, activation='relu'))
-#model.add(layers.GlobalMaxPooling1D())
-#model.add(layers.Dense(4096, activation='relu'))
-#model.add(layers.Dropout(0.5))
-#model.add(layers.Dense(4096, activation='relu'))
-#model.add(layers.Dropout(0.5))
-#model.add(layers.Dense(1258, activation='softmax'))
-
 category_num = 1258
 conv_filter_size = 128
 dense_hidden_size = 4096
