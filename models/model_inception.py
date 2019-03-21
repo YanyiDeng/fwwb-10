@@ -92,15 +92,15 @@ conv_1_1_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='
 # branch 2
 conv_1_2_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='relu')(embedded_text)
 batchNorm_1_2_1 = layers.BatchNormalization()(conv_1_2_1)
-conv_1_2_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(batchNorm_1_2_1)
+conv_1_2_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu', padding='same')(batchNorm_1_2_1)
 
 # branch 3
-conv_1_3_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(embedded_text)
+conv_1_3_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu', padding='same')(embedded_text)
 batchNorm_1_3_1 = layers.BatchNormalization()(conv_1_3_1)
-conv_1_3_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=5, activation='relu')(batchNorm_1_3_1)
+conv_1_3_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=5, activation='relu', padding='same')(batchNorm_1_3_1)
 
 # branch 4
-conv_1_4_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(embedded_text)
+conv_1_4_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu', padding='same')(embedded_text)
 
 # concat Inception 1
 concat_1 = layers.concatenate([conv_1_1_1, conv_1_2_2, conv_1_3_2, conv_1_4_1], axis=-1)
@@ -114,15 +114,15 @@ conv_2_1_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='
 # branch 2
 conv_2_2_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='relu')(concat_batchNorm_1)
 batchNorm_2_2_1 = layers.BatchNormalization()(conv_2_2_1)
-conv_2_2_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(batchNorm_2_2_1)
+conv_2_2_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu', padding='same')(batchNorm_2_2_1)
 
 # branch 3
-conv_2_3_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(concat_batchNorm_1)
+conv_2_3_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu', padding='same')(concat_batchNorm_1)
 batchNorm_2_3_1 = layers.BatchNormalization()(conv_2_3_1)
-conv_2_3_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=5, activation='relu')(batchNorm_2_3_1)
+conv_2_3_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=5, activation='relu', padding='same')(batchNorm_2_3_1)
 
 # branch 4
-conv_2_4_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(concat_batchNorm_1)
+conv_2_4_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu', padding='same')(concat_batchNorm_1)
 
 # concat Inception 2
 concat_2 = layers.concatenate([conv_2_1_1, conv_2_2_2, conv_2_3_2, conv_2_4_1], axis=-1)
