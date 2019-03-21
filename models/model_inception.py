@@ -162,7 +162,7 @@ model.compile(
 history = model.fit(
     data, labels,
     epochs=30,
-    batch_size=2048,
+    batch_size=1024,
     callbacks=callback_list,
     validation_split=0.2
 )

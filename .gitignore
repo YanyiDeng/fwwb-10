@@ -26,3 +26,7 @@ models/Figure_2\.png
 data/old_word_train\.tsv
 
 data_process/additional_data/
+
+models/model_cnn/
+
+models/model_inception/
