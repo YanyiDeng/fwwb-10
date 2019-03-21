@@ -76,7 +76,7 @@ for word, i in word_index.items():
 
 # 模型定义
 category_num = 1258
-conv_filter_size = 128
+recurrent_units_size = 512
 dense_hidden_size = 4096
 # Inputs
 text_input = Input(shape=(maxlen,))
@@ -84,20 +84,35 @@ text_input = Input(shape=(maxlen,))
 # Embeddings layers
 embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_matrix])(text_input)
 
-# Conv layers
-convs = []
-filter_sizes = [1, 2, 3, 4]
-for fsz in filter_sizes:
-    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
-    batchNorm_1 = layers.BatchNormalization()(conv_1)
-    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(batchNorm_1)
-    batchNorm_2 = layers.BatchNormalization()(conv_2)
-    globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
-    convs.append(globalMaxPool)
-merge = layers.concatenate(convs, axis=-1)
+# Recurrent layers
+# 1
+bidirect_rnn = layers.Bidirectional(
+    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
+    merge_mode='concat'
+)(embedded_text)
+flatten_layer = layers.Flatten()(bidirect_rnn)
+
+# 2
+#bidirect_rnn = layers.Bidirectional(
+#    layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5),
+#    merge_mode='concat'
+#)(embedded_text)
+
+# 3
+#bidirect_rnn = layers.Bidirectional(
+#    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
+#    merge_mode='concat'
+#)(embedded_text)
+#rnn_layer = layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5)(bidirect_rnn)
 
 # Classifier
-dense_1 = layers.Dense(dense_hidden_size, activation='relu')(merge)
+# 1
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(flatten_layer)
+# 2
+#dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn)
+# 3
+#dense_1 = layers.Dense(dense_hidden_size, activation='relu')(rnn_layer)
+
 batchNorm_3 = layers.BatchNormalization()(dense_1)
 label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
 model = Model(text_input, label_output)
