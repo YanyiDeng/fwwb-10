@@ -8,7 +8,7 @@ from keras import layers
 from keras import Input
 from keras.utils import plot_model
 from keras.utils.np_utils import to_categorical
-from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
@@ -88,20 +88,24 @@ embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_ma
 convs = []
 filter_sizes = [1, 2, 3, 4]
 for fsz in filter_sizes:
-    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
+    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz)(embedded_text)
     batchNorm_1 = layers.BatchNormalization()(conv_1)
-    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(batchNorm_1)
+    relu_1 = layers.Activation('relu')(batchNorm_1)
+    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz)(relu_1)
     batchNorm_2 = layers.BatchNormalization()(conv_2)
-    globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
+    relu_2 = layers.Activation('relu')(batchNorm_2)
+    globalMaxPool = layers.GlobalMaxPooling1D()(relu_2)
     convs.append(globalMaxPool)
 merge = layers.concatenate(convs, axis=-1)
 
-dense_1 = layers.Dense(dense_hidden_size, activation='relu')(merge)
+dense_1 = layers.Dense(dense_hidden_size)(merge)
 batchNorm_3 = layers.BatchNormalization()(dense_1)
-label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
+relu_3 = layers.Activation('relu')(batchNorm_3)
+label_output = layers.Dense(category_num, activation='softmax')(relu_3)
 model = Model(text_input, label_output)
 
 model.summary()
+plot_model(model, to_file=PLOT_MODEL_PATH)
 
 # 添加模型回调函数
 callback_list = [
@@ -113,11 +117,6 @@ callback_list = [
         filepath=MODEL_WEIGHT_PATH,
         monitor='val_loss',
         save_best_only=True,
-    ),
-    ReduceLROnPlateau(
-        monitor='val_loss',
-        factor=0.1,
-        patience=10,
     )
 ]
 
@@ -129,7 +128,7 @@ model.compile(
 history = model.fit(
     data, labels,
     epochs=30,
-    batch_size=4096,
+    batch_size=2048,
     callbacks=callback_list,
     validation_split=0.2
 )
@@ -154,4 +153,3 @@ plt.title('Training and validation loss')
 plt.legend()
 
 plt.show()
-plot_model(model, to_file=PLOT_MODEL_PATH)
