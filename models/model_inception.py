@@ -13,8 +13,8 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 GLOVE_EMBEDDING_PATH = "../glove/vectors.txt"
-MODEL_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
-PLOT_MODEL_PATH = 'result_plot/model_cnn.png'
+MODEL_WEIGHT_PATH = 'model_inception/model_inception.h5'
+PLOT_MODEL_PATH = 'result_plot/model_inception.png'
 
 # 将训练数据和分类结果存入列表
 item_names = []
@@ -85,19 +85,55 @@ text_input = Input(shape=(maxlen,))
 embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_matrix])(text_input)
 
 # Conv layers
-convs = []
-filter_sizes = [1, 2, 3, 4]
-for fsz in filter_sizes:
-    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
-    batchNorm_1 = layers.BatchNormalization()(conv_1)
-    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(batchNorm_1)
-    batchNorm_2 = layers.BatchNormalization()(conv_2)
-    globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
-    convs.append(globalMaxPool)
-merge = layers.concatenate(convs, axis=-1)
+# Inception 1
+# branch 1
+conv_1_1_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='relu')(embedded_text)
+
+# branch 2
+conv_1_2_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='relu')(embedded_text)
+batchNorm_1_2_1 = layers.BatchNormalization()(conv_1_2_1)
+conv_1_2_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(batchNorm_1_2_1)
+
+# branch 3
+conv_1_3_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(embedded_text)
+batchNorm_1_3_1 = layers.BatchNormalization()(conv_1_3_1)
+conv_1_3_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=5, activation='relu')(batchNorm_1_3_1)
+
+# branch 4
+conv_1_4_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(embedded_text)
+
+# concat Inception 1
+concat_1 = layers.concatenate([conv_1_1_1, conv_1_2_2, conv_1_3_2, conv_1_4_1], axis=-1)
+concat_relu_1 = layers.Activation('relu')(concat_1)
+concat_batchNorm_1 = layers.BatchNormalization()(concat_relu_1)
+
+# Inception 2
+# branch 1
+conv_2_1_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='relu')(concat_batchNorm_1)
+
+# branch 2
+conv_2_2_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=1, activation='relu')(concat_batchNorm_1)
+batchNorm_2_2_1 = layers.BatchNormalization()(conv_2_2_1)
+conv_2_2_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(batchNorm_2_2_1)
+
+# branch 3
+conv_2_3_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(concat_batchNorm_1)
+batchNorm_2_3_1 = layers.BatchNormalization()(conv_2_3_1)
+conv_2_3_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=5, activation='relu')(batchNorm_2_3_1)
+
+# branch 4
+conv_2_4_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(concat_batchNorm_1)
+
+# concat Inception 2
+concat_2 = layers.concatenate([conv_2_1_1, conv_2_2_2, conv_2_3_2, conv_2_4_1], axis=-1)
+concat_relu_2 = layers.Activation('relu')(concat_2)
+concat_batchNorm_2 = layers.BatchNormalization()(concat_relu_2)
+
+# MaxPooling
+globalMaxPool = layers.GlobalMaxPooling1D()(concat_batchNorm_2)
 
 # Classifier
-dense_1 = layers.Dense(dense_hidden_size, activation='relu')(merge)
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(globalMaxPool)
 batchNorm_3 = layers.BatchNormalization()(dense_1)
 label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
 model = Model(text_input, label_output)
