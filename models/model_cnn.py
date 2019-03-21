@@ -88,20 +88,17 @@ embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_ma
 convs = []
 filter_sizes = [1, 2, 3, 4]
 for fsz in filter_sizes:
-    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz)(embedded_text)
+    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
     batchNorm_1 = layers.BatchNormalization()(conv_1)
-    relu_1 = layers.Activation('relu')(batchNorm_1)
-    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz)(relu_1)
+    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(batchNorm_1)
     batchNorm_2 = layers.BatchNormalization()(conv_2)
-    relu_2 = layers.Activation('relu')(batchNorm_2)
-    globalMaxPool = layers.GlobalMaxPooling1D()(relu_2)
+    globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
     convs.append(globalMaxPool)
 merge = layers.concatenate(convs, axis=-1)
 
-dense_1 = layers.Dense(dense_hidden_size)(merge)
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(merge)
 batchNorm_3 = layers.BatchNormalization()(dense_1)
-relu_3 = layers.Activation('relu')(batchNorm_3)
-label_output = layers.Dense(category_num, activation='softmax')(relu_3)
+label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
 model = Model(text_input, label_output)
 
 model.summary()
