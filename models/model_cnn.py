@@ -102,7 +102,7 @@ label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
 model = Model(text_input, label_output)
 
 model.summary()
-plot_model(model, to_file=PLOT_MODEL_PATH)
+#plot_model(model, to_file=PLOT_MODEL_PATH)
 
 # 添加模型回调函数
 callback_list = [
