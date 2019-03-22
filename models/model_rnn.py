@@ -76,7 +76,7 @@ for word, i in word_index.items():
 
 # 模型定义
 category_num = 1258
-recurrent_units_size = 512
+recurrent_units_size = 300
 dense_hidden_size = 4096
 # Inputs
 text_input = Input(shape=(maxlen,))
@@ -86,11 +86,14 @@ embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_ma
 
 # Recurrent layers
 # 1
-bidirect_rnn = layers.Bidirectional(
+bidirect_rnn_1 = layers.Bidirectional(
     layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
     merge_mode='concat'
 )(embedded_text)
-flatten_layer = layers.Flatten()(bidirect_rnn)
+bidirect_rnn_2 = layers.Bidirectional(
+    layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5),
+    merge_mode='concat'
+)(bidirect_rnn_1)
 
 # 2
 #bidirect_rnn = layers.Bidirectional(
@@ -105,13 +108,22 @@ flatten_layer = layers.Flatten()(bidirect_rnn)
 #)(embedded_text)
 #rnn_layer = layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5)(bidirect_rnn)
 
+# 4
+#bidirect_rnn = layers.Bidirectional(
+#    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
+#    merge_mode='concat'
+#)(embedded_text)
+#flatten_layer = layers.Flatten()(bidirect_rnn)
+
 # Classifier
 # 1
-dense_1 = layers.Dense(dense_hidden_size, activation='relu')(flatten_layer)
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn_2)
 # 2
 #dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn)
 # 3
 #dense_1 = layers.Dense(dense_hidden_size, activation='relu')(rnn_layer)
+# 4
+#dense_1 = layers.Dense(dense_hidden_size, activation='relu')(flatten_layer)
 
 batchNorm_3 = layers.BatchNormalization()(dense_1)
 label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
