@@ -76,7 +76,8 @@ for word, i in word_index.items():
 
 # 模型定义
 category_num = 1258
-conv_filter_size = 128
+conv_filter_size = 512
+recurrent_units_size = 300
 dense_hidden_size = 4096
 # Inputs
 text_input = Input(shape=(maxlen,))
@@ -84,20 +85,29 @@ text_input = Input(shape=(maxlen,))
 # Embeddings layers
 embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_matrix])(text_input)
 
+# Recurrent layers
+bidirect_rnn_1 = layers.Bidirectional(
+    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
+    merge_mode='concat'
+)(embedded_text)
+#bidirect_rnn_2 = layers.Bidirectional(
+#    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
+#    merge_mode='concat'
+#)(bidirect_rnn_1)
+
+# concat rnn and embedding layer
+concat = layers.concatenate([bidirect_rnn_1, embedded_text], axis=-1)
+#concat = layers.concatenate([bidirect_rnn_2, embedded_text], axis=-1)
+
 # Conv layers
-convs = []
-filter_sizes = [1, 2, 3, 4]
-for fsz in filter_sizes:
-    conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(embedded_text)
-    batchNorm_1 = layers.BatchNormalization()(conv_1)
-    conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=fsz, activation='relu')(batchNorm_1)
-    batchNorm_2 = layers.BatchNormalization()(conv_2)
-    globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
-    convs.append(globalMaxPool)
-merge = layers.concatenate(convs, axis=-1)
+conv_1 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(concat)
+batchNorm_1 = layers.BatchNormalization()(conv_1)
+conv_2 = layers.Conv1D(filters=conv_filter_size, kernel_size=3, activation='relu')(batchNorm_1)
+batchNorm_2 = layers.BatchNormalization()(conv_2)
+globalMaxPool = layers.GlobalMaxPooling1D()(batchNorm_2)
 
 # Classifier
-dense_1 = layers.Dense(dense_hidden_size, activation='relu')(merge)
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(globalMaxPool)
 batchNorm_3 = layers.BatchNormalization()(dense_1)
 label_output = layers.Dense(category_num, activation='softmax')(batchNorm_3)
 model = Model(text_input, label_output)
