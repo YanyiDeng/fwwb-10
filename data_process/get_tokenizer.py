@@ -2,7 +2,7 @@ import pickle
 import pandas as pd
 from keras.preprocessing.text import Tokenizer
 
-WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
+WORD_TRAIN_FILE_PATH = "../data/old_word_train.tsv"
 TOKENIZER_PATH = "additional_data/tokenizer.pickle"
 
 # 将训练数据和分类结果存入列表

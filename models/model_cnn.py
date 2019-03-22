@@ -11,6 +11,7 @@ from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 WORD_TRAIN_FILE_PATH = "../data/word_train.tsv"
+WORD_VAL_FILE_PATH = "../data/word_val.tsv"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 GLOVE_EMBEDDING_PATH = "../glove/vectors.txt"
 MODEL_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
@@ -21,12 +22,24 @@ item_names = []
 item_types = []
 word_train_data = pd.read_csv(WORD_TRAIN_FILE_PATH, sep='\t', header=0, low_memory=False)
 
+# 将验证数据和分类结果存入列表
+val_names = []
+val_types = []
+word_val_data = pd.read_csv(WORD_VAL_FILE_PATH, sep='\t', header=0, low_memory=False)
+
 for (item_name, item_type) in zip(word_train_data['ITEM_NAME'], word_train_data['TYPE']):
     item_name = item_name.strip()
     item_names.append(item_name)
     item_types.append(item_type)
 print("商品名共有", len(item_names), "项")
 print("商品分类共有", len(item_types), "项")
+
+for (val_name, val_type) in zip(word_val_data['ITEM_NAME'], word_val_data['TYPE']):
+    val_name = val_name.strip()
+    val_names.append(val_name)
+    val_types.append(val_type)
+print("验证商品名共有", len(val_names), "项")
+print("验证商品分类共有", len(val_types), "项")
 
 # 对数据的文本进行分词与建立索引
 print("\n开始构建模型......")
@@ -36,15 +49,20 @@ max_words = 250000
 with open(TOKENIZER_PATH, 'rb') as f:
     tokenizer = pickle.load(f)
 sequences = tokenizer.texts_to_sequences(item_names)
+val_sequences = tokenizer.texts_to_sequences(val_names)
 
 word_index = tokenizer.word_index
 print("Found %s unique tokens." % len(word_index))
 
 data = pad_sequences(sequences, maxlen=maxlen)
+x_val = pad_sequences(val_sequences, maxlen=maxlen)
 
 labels = to_categorical(item_types)
+y_val = to_categorical(val_types)
 print('Shape of data tensor:', data.shape)
 print('Shape of label tensor:', labels.shape)
+print('Shape of val data tensor:', x_val.shape)
+print('Shape of val label tensor:', y_val.shape)
 
 # 打乱数据顺序
 indices = np.arange(data.shape[0])
@@ -128,7 +146,7 @@ history = model.fit(
     epochs=30,
     batch_size=2048,
     callbacks=callback_list,
-    validation_split=0.2
+    validation_data=[x_val, y_val]
 )
 
 # 绘制结果图

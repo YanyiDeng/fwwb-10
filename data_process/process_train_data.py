@@ -4,6 +4,10 @@ import jieba
 CLASSIFICATION_FILE_PATH = "additional_data/classification.txt"
 NEW_TRAIN_DATA_FILE_PATH = "../raw_data/newtrain.tsv"
 WORD_TRAIN_DATA_FILE_PATH = "../data/word_train.tsv"
+#NEW_TRAIN_DATA_FILE_PATH = "../raw_data/train_2.tsv"
+#WORD_TRAIN_DATA_FILE_PATH = "../data/word_val.tsv"
+#NEW_TRAIN_DATA_FILE_PATH = "../raw_data/train.tsv"
+#WORD_TRAIN_DATA_FILE_PATH = "../data/old_word_train.tsv"
 
 #建立分类名的索引表
 item_type_index = {}
