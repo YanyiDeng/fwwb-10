@@ -4,7 +4,7 @@ from keras.models import load_model
 from keras.utils.np_utils import to_categorical
 from keras.preprocessing.sequence import pad_sequences
 
-MODEL_PATH = "model/model.h5"
+MODEL_PATH = "model_inception/model_inception.h5"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 OLD_WORD_TRAIN_PATH = "../data/old_word_train.tsv"
 

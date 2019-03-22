@@ -18,7 +18,7 @@ def jieba_tokenizer(item_name):
 
 
 CLASSIFICATION_FILE_PATH = "../data_process/additional_data/classification.txt"
-MODEL_PATH = "model/model.h5"
+MODEL_PATH = "model_inception/model_inception.h5"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 RESULT_PATH = "../WebVisualization/lib/assets/result.txt"
 
