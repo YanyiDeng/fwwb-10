@@ -14,4 +14,6 @@
 # TextRCNN
 50W验证精度
 
+Epoch 11/30
+11	val_loss: 1.2702 - val_acc: 0.8317
 

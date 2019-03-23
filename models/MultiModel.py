@@ -15,6 +15,8 @@ WORD_VAL_FILE_PATH = "../data/word_val.tsv"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 MODEL_CNN_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
 MODEL_INCEPTION_WEIGHT_PATH = 'model_inception/model_inception.h5'
+MODEL_RNN_WEIGHT_PATH = 'model_rnn/model_rnn.h5'
+MODEL_RCNN_WEIGHT_PATH = 'model_rcnn/model_rcnn.h5'
 
 # 将验证数据和分类结果存入列表
 val_names = []
@@ -60,11 +62,29 @@ for layer in model_inception.layers:
     layer.name += '_inception'
     layer.trainable = False
 
+model_rnn = load_model(MODEL_RNN_WEIGHT_PATH)
+model_rnn.name += '_rnn'
+for layer in model_rnn.layers:
+    layer.name += '_rnn'
+    layer.trainable = False
+
+model_rcnn = load_model(MODEL_RCNN_WEIGHT_PATH)
+model_rcnn.name += '_rcnn'
+for layer in model_rcnn.layers:
+    layer.name += '_rcnn'
+    layer.trainable = False
+
 text_input = Input(shape=(maxlen,))
 cnn_output = model_cnn(text_input)
 inception_output = model_inception(text_input)
+rnn_output = model_rnn(text_input)
+rcnn_output = model_rcnn(text_input)
 
-label_output = layers.average([cnn_output, inception_output])
+models_list = [cnn_output, inception_output]
+#models_list = [cnn_output, rnn_output]
+#models_list = [cnn_output, rcnn_output]
+
+label_output = layers.average(models_list)
 multi_model = Model(text_input, label_output)
 multi_model.summary()
 
@@ -73,5 +93,5 @@ multi_model.compile(
     loss='categorical_crossentropy',
     metrics=['acc']
 )
-cost = multi_model.evaluate(x_val, y_val, batch_size=4096)
+cost = multi_model.evaluate(x_val, y_val, batch_size=1024)
 print("loss:", cost[0], "  accuracy:", cost[1])
