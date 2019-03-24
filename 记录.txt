@@ -34,3 +34,7 @@ loss: 0.7848   accuracy: 0.8394
 
 RNN+RCNN:
 loss: 0.7287   accuracy: 0.8457
+
+# 打标签用时
+test.tsv:
+train.tsv:

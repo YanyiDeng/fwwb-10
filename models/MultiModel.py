@@ -90,4 +90,3 @@ multi_model.compile(
 )
 cost = multi_model.evaluate(x_val, y_val, batch_size=1024)
 print("loss:", cost[0], "  accuracy:", cost[1])
-multi_model.save(MULTI_MODEL_WEIGHT_PATH)

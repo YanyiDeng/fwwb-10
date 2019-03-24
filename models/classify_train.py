@@ -18,7 +18,8 @@ def jieba_tokenizer(temp_item_name):
 
 
 CLASSIFICATION_FILE_PATH = "../data_process/additional_data/classification.txt"
-MODEL_PATH = "multi_model/multi_model.h5"
+MODEL_INCEPTION_WEIGHT_PATH = 'model_inception/model_inception.h5'
+MODEL_RNN_WEIGHT_PATH = 'model_rnn/model_rnn.h5'
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
 DATA_PATH = "../raw_data/train.tsv"
 RESULT_PATH = "../result/train_with_label.tsv"
@@ -36,7 +37,34 @@ with open(CLASSIFICATION_FILE_PATH, 'r', encoding='utf-8') as f:
 # 加载模型和分词器
 with open(TOKENIZER_PATH, 'rb') as f:
     tokenizer = pickle.load(f)
-model = load_model(MODEL_PATH)
+
+model_inception = load_model(MODEL_INCEPTION_WEIGHT_PATH)
+model_inception.name += '_inception'
+for layer in model_inception.layers:
+    layer.name += '_inception'
+    layer.trainable = False
+
+model_rnn = load_model(MODEL_RNN_WEIGHT_PATH)
+model_rnn.name += '_rnn'
+for layer in model_rnn.layers:
+    layer.name += '_rnn'
+    layer.trainable = False
+
+text_input = Input(shape=(maxlen,))
+inception_output = model_inception(text_input)
+rnn_output = model_rnn(text_input)
+
+models_list = [inception_output, rnn_output]
+
+label_output = layers.average(models_list)
+multi_model = Model(text_input, label_output)
+multi_model.summary()
+
+multi_model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['acc']
+)
 
 # 进行商品分类的预测
 maxlen = 25
@@ -59,7 +87,7 @@ processed_item_names = [jieba_tokenizer(name) for name in item_names]
 sequences = tokenizer.texts_to_sequences(processed_item_names)
 data = pad_sequences(sequences, maxlen=maxlen)
 # 预测商品标签
-labels = model.predict(data)
+labels = multi_model.predict(data)
 item_types = []
 for temp_label_one_hot in labels:
     label_index = get_label_index(temp_label_one_hot)
