@@ -1,37 +1,36 @@
-# TextCNN
-50W验证精度
-loss: 0.3324634504356384   accuracy: 0.9293060000152588
+# SingleModel
+TextCNN:
+val_loss: 1.0827 - val_acc: 0.8184
+50W数据验证loss: 0.3325   accuracy: 0.9293
 
-Epoch 3/30
-val_loss: 1.0827 - val_acc: 0.8084
-
-
-# TextInception
-50W验证精度
-loss: 0.3603824150218964   accuracy: 0.9153640000152587
-
-Epoch 10/30
+TextInception:
 val_loss: 1.2235 - val_acc: 0.8268
+50W数据验证loss: 0.3604   accuracy: 0.9154
 
-Epoch 13/30
-val_loss: 1.2693 - val_acc: 0.8256
+TextRNN:
+val_loss: 0.8305 - val_acc: 0.8483
+50W数据验证loss: 0.3932   accuracy: 0.9056
 
-
-# TextRNN
-50W验证精度
-loss: 0.39316304650497436   accuracy: 0.9055820000152588
-
-Epoch 2/30
-val_loss: 0.8305 - val_acc: 0.8426
-
-Epoch 11/30
-val_loss: 1.5635 - val_acc: 0.8503
+TextRCNN
+val_loss: 1.2702 - val_acc: 0.8317
+50W数据验证loss: 0.4362   accuracy: 0.8978
 
 
-# TextRCNN
-50W验证精度
-loss: 0.43621783016204835   accuracy: 0.8978080000076294
+# MultiModel
+CNN+Inception:
+loss: 0.7862   accuracy: 0.8405
 
-Epoch 11/30
-11	val_loss: 1.2702 - val_acc: 0.8317
+CNN+RNN:
+loss: 0.7173   accuracy: 0.8498
 
+CNN+RCNN:
+loss: 0.8066   accuracy: 0.8380
+
+Inception+RNN:
+loss: 0.7074   accuracy: 0.8507
+
+Inception+RCNN:
+loss: 0.7848   accuracy: 0.8394
+
+RNN+RCNN:
+loss: 0.7287   accuracy: 0.8457

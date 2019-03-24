@@ -1,15 +1,11 @@
 import pickle
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from keras.models import load_model
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import Model
 from keras import layers
 from keras import Input
-from keras.utils import plot_model
 from keras.utils.np_utils import to_categorical
-from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 WORD_VAL_FILE_PATH = "../data/word_val.tsv"
 TOKENIZER_PATH = "../data_process/additional_data/tokenizer.pickle"
@@ -17,6 +13,7 @@ MODEL_CNN_WEIGHT_PATH = 'model_cnn/model_cnn.h5'
 MODEL_INCEPTION_WEIGHT_PATH = 'model_inception/model_inception.h5'
 MODEL_RNN_WEIGHT_PATH = 'model_rnn/model_rnn.h5'
 MODEL_RCNN_WEIGHT_PATH = 'model_rcnn/model_rcnn.h5'
+MULTI_MODEL_WEIGHT_PATH = 'multi_model/multi_model.h5'
 
 # 将验证数据和分类结果存入列表
 val_names = []
@@ -50,11 +47,11 @@ print('Shape of val label tensor:', y_val.shape)
 
 # merge models
 
-model_cnn = load_model(MODEL_CNN_WEIGHT_PATH)
-model_cnn.name += '_cnn'
-for layer in model_cnn.layers:
-    layer.name += '_cnn'
-    layer.trainable = False
+#model_cnn = load_model(MODEL_CNN_WEIGHT_PATH)
+#model_cnn.name += '_cnn'
+#for layer in model_cnn.layers:
+#    layer.name += '_cnn'
+#    layer.trainable = False
 
 model_inception = load_model(MODEL_INCEPTION_WEIGHT_PATH)
 model_inception.name += '_inception'
@@ -68,21 +65,19 @@ for layer in model_rnn.layers:
     layer.name += '_rnn'
     layer.trainable = False
 
-model_rcnn = load_model(MODEL_RCNN_WEIGHT_PATH)
-model_rcnn.name += '_rcnn'
-for layer in model_rcnn.layers:
-    layer.name += '_rcnn'
-    layer.trainable = False
+#model_rcnn = load_model(MODEL_RCNN_WEIGHT_PATH)
+#model_rcnn.name += '_rcnn'
+#for layer in model_rcnn.layers:
+#    layer.name += '_rcnn'
+#    layer.trainable = False
 
 text_input = Input(shape=(maxlen,))
-cnn_output = model_cnn(text_input)
+#cnn_output = model_cnn(text_input)
 inception_output = model_inception(text_input)
 rnn_output = model_rnn(text_input)
-rcnn_output = model_rcnn(text_input)
+#rcnn_output = model_rcnn(text_input)
 
-models_list = [cnn_output, inception_output]
-#models_list = [cnn_output, rnn_output]
-#models_list = [cnn_output, rcnn_output]
+models_list = [inception_output, rnn_output]
 
 label_output = layers.average(models_list)
 multi_model = Model(text_input, label_output)
@@ -95,3 +90,4 @@ multi_model.compile(
 )
 cost = multi_model.evaluate(x_val, y_val, batch_size=1024)
 print("loss:", cost[0], "  accuracy:", cost[1])
+multi_model.save(MULTI_MODEL_WEIGHT_PATH)
