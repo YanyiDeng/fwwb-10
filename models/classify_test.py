@@ -31,6 +31,9 @@ RESULT_PATH = "../result/test_with_label.tsv"
 # 计时
 start = time.clock()
 
+# 进行商品分类的预测
+maxlen = 25
+
 # 建立索引转分类名的列表
 index_to_type = []
 with open(CLASSIFICATION_FILE_PATH, 'r', encoding='utf-8') as f:
@@ -70,8 +73,6 @@ multi_model.compile(
     metrics=['acc']
 )
 
-# 进行商品分类的预测
-maxlen = 25
 # 获取需要预测的商品名称
 item_names = []
 with open(DATA_PATH, 'r', encoding='utf-8') as f:
