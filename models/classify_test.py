@@ -4,6 +4,10 @@ import numpy as np
 import time
 from keras.models import load_model
 from keras.preprocessing.sequence import pad_sequences
+from keras.models import Model
+from keras import layers
+from keras import Input
+from keras.utils.np_utils import to_categorical
 
 
 # 将预测结果的one_hot编码转换为对应的类别整数索引
