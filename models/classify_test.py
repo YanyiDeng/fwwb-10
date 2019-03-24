@@ -88,7 +88,7 @@ processed_item_names = [jieba_tokenizer(name) for name in item_names]
 sequences = tokenizer.texts_to_sequences(processed_item_names)
 data = pad_sequences(sequences, maxlen=maxlen)
 # 预测商品标签
-labels = multi_model.predict(data)
+labels = multi_model.predict(data, batch_size=512)
 item_types = []
 for temp_label_one_hot in labels:
     label_index = get_label_index(temp_label_one_hot)
