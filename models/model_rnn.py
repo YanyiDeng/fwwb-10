@@ -104,20 +104,20 @@ embedded_text = layers.Embedding(max_words, embedding_dim, weights=[embedding_ma
 
 # Recurrent layers
 # 1
-bidirect_rnn_1 = layers.Bidirectional(
-    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
-    merge_mode='concat'
-)(embedded_text)
-bidirect_rnn_2 = layers.Bidirectional(
-    layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5),
-    merge_mode='concat'
-)(bidirect_rnn_1)
-
-# 2
-#bidirect_rnn = layers.Bidirectional(
-#    layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5),
+#bidirect_rnn_1 = layers.Bidirectional(
+#    layers.LSTM(recurrent_units_size, return_sequences=True, dropout=0.5, recurrent_dropout=0.5),
 #    merge_mode='concat'
 #)(embedded_text)
+#bidirect_rnn_2 = layers.Bidirectional(
+#    layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5),
+#    merge_mode='concat'
+#)(bidirect_rnn_1)
+
+# 2
+bidirect_rnn = layers.Bidirectional(
+    layers.LSTM(recurrent_units_size, dropout=0.5, recurrent_dropout=0.5),
+    merge_mode='concat'
+)(embedded_text)
 
 # 3
 #bidirect_rnn = layers.Bidirectional(
@@ -135,9 +135,9 @@ bidirect_rnn_2 = layers.Bidirectional(
 
 # Classifier
 # 1
-dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn_2)
+#dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn_2)
 # 2
-#dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn)
+dense_1 = layers.Dense(dense_hidden_size, activation='relu')(bidirect_rnn)
 # 3
 #dense_1 = layers.Dense(dense_hidden_size, activation='relu')(rnn_layer)
 # 4
@@ -171,7 +171,7 @@ model.compile(
 history = model.fit(
     data, labels,
     epochs=30,
-    batch_size=2048,
+    batch_size=1024,
     callbacks=callback_list,
     validation_data=[x_val, y_val]
 )

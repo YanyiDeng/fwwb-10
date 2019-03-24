@@ -1,18 +1,36 @@
 # TextCNN
 50W验证精度
+loss: 0.3324634504356384   accuracy: 0.9293060000152588
+
+Epoch 3/30
+val_loss: 1.0827 - val_acc: 0.8084
 
 
 # TextInception
 50W验证精度
+loss: 0.3603824150218964   accuracy: 0.9153640000152587
+
+Epoch 10/30
+val_loss: 1.2235 - val_acc: 0.8268
+
+Epoch 13/30
+val_loss: 1.2693 - val_acc: 0.8256
 
 
 # TextRNN
 50W验证精度
+loss: 0.39316304650497436   accuracy: 0.9055820000152588
 
+Epoch 2/30
+val_loss: 0.8305 - val_acc: 0.8426
+
+Epoch 11/30
+val_loss: 1.5635 - val_acc: 0.8503
 
 
 # TextRCNN
 50W验证精度
+loss: 0.43621783016204835   accuracy: 0.8978080000076294
 
 Epoch 11/30
 11	val_loss: 1.2702 - val_acc: 0.8317
