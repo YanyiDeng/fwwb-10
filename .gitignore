@@ -36,3 +36,5 @@ data/word_val\.tsv
 models/model_rcnn/model_rcnn\.h5
 
 models/model_rnn/model_rnn\.h5
+
+result/

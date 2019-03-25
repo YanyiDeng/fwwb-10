@@ -36,5 +36,5 @@ RNN+RCNN:
 loss: 0.7287   accuracy: 0.8457
 
 # 打标签用时
-test.tsv:
-train.tsv:
+test.tsv:2041s
+train.tsv:252s
