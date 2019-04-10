@@ -3,9 +3,22 @@ TextCNN:
 val_loss: 1.0827 - val_acc: 0.8184
 50W数据验证loss: 0.3325   accuracy: 0.9293
 
+未进行数据扩充：
+（1）进行验证集标签全零补充：
+val_loss: 1.0017 - val_acc: 0.8279
+（2）未进行验证集标签全零补充：
+val_loss: 0.9752 - val_acc: 0.8318
+
 TextInception:
+进行数据扩充：
 val_loss: 1.2235 - val_acc: 0.8268
 50W数据验证loss: 0.3604   accuracy: 0.9154
+
+未进行数据扩充：
+（1）进行验证集标签全零补充：
+val_loss: 1.0553 - val_acc: 0.8235
+（2）未进行验证集标签全零补充：
+val_loss: 1.0294 - val_acc: 0.8201
 
 TextRNN:
 val_loss: 0.8305 - val_acc: 0.8483

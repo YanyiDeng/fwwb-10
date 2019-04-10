@@ -41,6 +41,11 @@ for (val_name, val_type) in zip(word_val_data['ITEM_NAME'], word_val_data['TYPE'
 print("验证商品名共有", len(val_names), "项")
 print("验证商品分类共有", len(val_types), "项")
 
+item_names += val_names
+print("训练商品名共有", len(item_names), "项")
+extend_item_types = np.zeros((len(val_types), 1258))
+print("全零标签形状为", extend_item_types.shape)
+
 # 对数据的文本进行分词与建立索引
 print("\n开始构建模型......")
 maxlen = 25
@@ -58,6 +63,7 @@ data = pad_sequences(sequences, maxlen=maxlen)
 x_val = pad_sequences(val_sequences, maxlen=maxlen)
 
 labels = to_categorical(item_types)
+labels = np.concatenate((labels, extend_item_types), axis=0)
 y_val = to_categorical(val_types)
 print('Shape of data tensor:', data.shape)
 print('Shape of label tensor:', labels.shape)
