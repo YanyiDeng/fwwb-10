@@ -9,6 +9,16 @@
 |　　|- result　　　　　　　　　    # 通过模型对test.tsv和train.tsv打标签后的结果<br/>
 |　　|- WebVisualizaion　　　　　  # Web可视化代码<br/>
 
+## 注意事项
+
+- raw_data文件夹下的test.tsv、train.tsv、train_2.tsv、train_8.tsv、newtrain.tsv<br/>
+- data文件夹下的word_train.tsv、word_val.tsv、old_word_train.tsv<br/>
+- glove文件夹下的corpus.txt、vectors.txt<br/>
+
+以上文件都因为大小原因未放进来，其中test.tsv、train.tsv为赛题方所给数据，其余tsv文件和corpus.txt都可通过data_process文件夹下的代码运行得到，vectors.txt可通过GloVe对corpus.txt进行训练得到。<br/>
+
+models文件夹下的各个模型对应文件夹中的模型权重也未放入。<br/>
+
 ## raw_data文件夹
 
 - test.tsv和train.tsv为赛题方提供的数据。<br/>
@@ -39,10 +49,9 @@
 ## models文件夹
 
 - model_xxx.py为模型xxx的对应代码。相应的文件夹存储模型xxx的结构以及权重。MultiModel.py为模型融合的代码。<br/>
-- predict.py为使用模型进行商品分类预测的代码。<br/>
+- predict.py为使用模型进行商品分类预测的代码。商品名称由命令行参数传入，传入商品名称格式同Web应用商品名称格式相同。<br/>
 - validate.py为使用模型对原本的50万训练数据进行验证的代码。<br/>
 - classify_test.py和classify_train.py分别为对test.tsv和train.tsv中的商品名称进行分类预测并打上标签的代码。<br/>
-- result_plot文件夹存储各个模型的结构图以及训练时的损失和精度曲线图。<br/>
 
 ## result文件夹
 
